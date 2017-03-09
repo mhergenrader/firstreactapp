@@ -4,3 +4,7 @@
 - npm test = keeps an auto watch as well! cool!
 
 - can start mocking up static version of how to render in just JSX
+
+- there is an available defaultChecked property available
+
+rendered view should be function of app state (functional)
