@@ -11,6 +11,9 @@ import './App.css'; // CSS modules
 //import {TodoForm} from './components/todo/TodoForm';
 //import {TodoList} from './components/todo/TodoList';
 
+// TODO
+// interesting that we didn't need to include index here at end of path
+// to collect - is this an ES6 feature or wrapped up in the build step?
 import {TodoForm, TodoList} from './components/todo';
 
 class App extends Component {
