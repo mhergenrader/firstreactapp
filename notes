@@ -11,5 +11,32 @@ rendered view should be function of app state (functional)
 want state to be in sync w/ view; this is accomplished via previous line
 
 
+create-react-app comes w/ jest for testing, so can build items in test-driven
+style
+- note here that we wrote a test first and then wrote the code after to make
+  the test pass: TDD
+- and tests effectively serve as a more detailed contract of pre- and post-
+  conditions - they define the contract and high-level behavior of what we
+  should expect from certain things that we put under test
+  - the code itself can do some error checking, etc. (and tests should try
+    to potentially hit that), but tests should test the intended behaviors as 
+    well
+    - and in TDD, we can determine these constraints and possible error
+      conditions ahead of time to then give us the ability to do proper error
+      checking in the code right away w/o much thought! that is, we can think
+      of the general contract and constraints for something to test and then the
+      code just implements what should be done in addition to just implementing
+      those constraints and how it should behave! test-first helps us design our
+      functions, etc. directly! (in an unbiased way because we are stating
+      upfront via tests first exactly how this function, etc. should act)
+- also good to do TDD because then if we change things, we can either set up
+  the latest assumptions in our tests and have essentially a checklist of what
+  new things to apply to our function under test or we can implement changes
+  and then see any existing tests/assertions fail (former is likely better)
+  - corollary: gives you confidence in refactoring that when you change
+    something and tests still pass, you have a valid replacement (or can have
+    decent confidence, assuming you have comprehensive enough tests)
+- Arrange, Act, Assert as the unit test setup (pretty self-explanatory)
+
 TODO:
 - look at the reexport setup of index.js in components/todo
