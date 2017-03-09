@@ -4,3 +4,12 @@
 - npm test = keeps an auto watch as well! cool!
 
 - can start mocking up static version of how to render in just JSX
+
+- there is an available defaultChecked property available
+
+rendered view should be function of app state (functional)
+want state to be in sync w/ view; this is accomplished via previous line
+
+
+TODO:
+- look at the reexport setup of index.js in components/todo
