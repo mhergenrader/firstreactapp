@@ -8,3 +8,4 @@
 - there is an available defaultChecked property available
 
 rendered view should be function of app state (functional)
+want state to be in sync w/ view; this is accomplished via previous line

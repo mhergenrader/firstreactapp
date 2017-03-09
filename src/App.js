@@ -7,6 +7,8 @@ import React, { Component } from 'react';
 import logo from './logo.svg'; // interesting that webpack can allow you to load files!
 import './App.css'; // CSS modules
 
+import {TodoForm} from './components/todo/TodoForm';
+
 class App extends Component {
   // if no constructor provided, then the default looks like this:
   /*
@@ -42,7 +44,34 @@ class App extends Component {
           isComplete: true,
         },
       ],
+      currentTodo: '',
     };
+
+    // remember: when you reference functions inside this class, they are
+    // not (no longer) autobound like for React.createClass, so must do
+    // this ourselves, since just using the function as an R-value has it
+    // invoked as a function w/o the class context
+    this.handleInputChange = this.handleInputChange.bind(this);
+  }
+
+  // again: interesting that we need to bind this ourselves in the constructor
+  // in ES6; seems like React does this automatically for React.createElement
+  // actually: React removed this capability for ES6:
+  // http://blog.andrewray.me/react-es6-autobinding-and-createclass/
+  // React.createClass creates mixins, autobinds this; this was removed for ES6
+  // now, all class methods here are still just functions, so we must bind
+  // ourselves - site above has some options for this, with this video series
+  // preferring the constructor version of this
+  // shorthand arrow functions could be a thing in ES7:
+  // handleInputChange = () => { ... }; this would take the lexical scope
+  // of class
+  handleInputChange(event) {
+    // do NOT do this.state.currentTodo = event.target.value;
+    // not only will this not trigger a rerender, but you lose any sort
+    // of auditing/tracking of changes
+    this.setState({
+      currentTodo: event.target.value,
+    });
   }
 
   render() {
@@ -53,9 +82,8 @@ class App extends Component {
           <h2>React Todos</h2>
         </div>
         <div className="Todo-App">
-          <form>
-            <input type="text" />
-          </form>
+          <TodoForm currentTodo={this.state.currentTodo} handleInputChange={this.handleInputChange} />
+
           <div className="Todo-List">
             <ul>
               {this.state.todos.map(todo =>
