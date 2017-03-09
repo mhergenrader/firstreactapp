@@ -18,3 +18,9 @@ export const TodoList = (props) => (
   </div>
 );
 
+// this is essentially our interface out to anyone trying to reuse this
+// component of what is needed/expected as the contract for using it
+TodoList.propTypes = {
+  todos: React.PropTypes.array.isRequired,
+};
+
