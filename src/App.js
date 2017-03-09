@@ -7,7 +7,11 @@ import React, { Component } from 'react';
 import logo from './logo.svg'; // interesting that webpack can allow you to load files!
 import './App.css'; // CSS modules
 
-import {TodoForm} from './components/todo/TodoForm';
+// clean this into single directory
+//import {TodoForm} from './components/todo/TodoForm';
+//import {TodoList} from './components/todo/TodoList';
+
+import {TodoForm, TodoList} from './components/todo';
 
 class App extends Component {
   // if no constructor provided, then the default looks like this:
@@ -83,16 +87,7 @@ class App extends Component {
         </div>
         <div className="Todo-App">
           <TodoForm currentTodo={this.state.currentTodo} handleInputChange={this.handleInputChange} />
-
-          <div className="Todo-List">
-            <ul>
-              {this.state.todos.map(todo =>
-                <li key={todo.id}>
-                  <input type="checkbox" defaultChecked={todo.isComplete}/>
-                  {todo.name}
-                </li>)}
-            </ul>
-          </div>
+          <TodoList todos={this.state.todos} />          
         </div>
       </div>
     );
