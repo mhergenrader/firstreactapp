@@ -1,0 +1,6 @@
+- don't really need to worry too much about index.html - just a template, and
+  most everything in React is done
+
+- npm test = keeps an auto watch as well! cool!
+
+- can start mocking up static version of how to render in just JSX
