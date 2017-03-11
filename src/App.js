@@ -15,6 +15,7 @@ import './App.css'; // CSS modules
 // interesting that we didn't need to include index here at end of path
 // to collect - is this an ES6 feature or wrapped up in the build step?
 import {TodoForm, TodoList} from './components/todo';
+import {addTodo, generateId} from './lib/todoHelpers';
 
 class App extends Component {
   // if no constructor provided, then the default looks like this:
@@ -23,8 +24,36 @@ class App extends Component {
     super(...args);
   }
    */
-  constructor() {
-    super(); // constructor for extending component gets called
+
+  // property initializer syntax (looks familiar from TS, and React ships
+  // w/ configuration to allow this by default from create-react-app)
+  // thus, we don't have to put this in the constructor
+  state = {
+    todos: [
+      {
+        id: 1,
+        name: 'Learn React',
+        isComplete: false,
+      },
+      {
+        id: 2,
+        name: 'Build awesome app',
+        isComplete: false,
+      },
+      {
+        id: 3,
+        name: 'Ship it',
+        isComplete: true,
+      },
+    ],
+    currentTodo: '',
+  };
+
+  // after shifting to property initializer syntax, we have a constructor
+  // that just calls super, which creates a "useless constructor" warning,
+  // since that's all a default constructor does anyway
+  //constructor() {
+  //  super(); // constructor for extending component gets called
     // remember here: unlike in ES5-style classes, in ES6, the actual object
     // after new is created in the superclass constructor function first; ES5
     // actually has the subclass constructor (what follows new) create the
@@ -33,7 +62,8 @@ class App extends Component {
     // must call super in order to access this - cannot do before - this is
     // because the actual object is created in the superclass constructor
 
-    this.state = {
+    // notice how we have moved this above!
+    /*this.state = {
       todos: [
         {
           id: 1,
@@ -52,13 +82,51 @@ class App extends Component {
         },
       ],
       currentTodo: '',
-    };
+    };*/
 
     // remember: when you reference functions inside this class, they are
     // not (no longer) autobound like for React.createClass, so must do
     // this ourselves, since just using the function as an R-value has it
     // invoked as a function w/o the class context
-    this.handleInputChange = this.handleInputChange.bind(this);
+    /*this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this); // since we refer to "this" in the callback function, which is our component (to access state, etc.)
+    this.handleEmptySubmit = this.handleEmptySubmit.bind(this);*/
+
+    // actually, now we're using property initializer syntax below now, so
+    // we no longer have to do these explicit bindings - create-react-app
+    // comes with this directly!
+  //}
+
+  // can avoid ugly conditional code in submit handler for validation - can
+  // keep in own function
+  // notice here that this is property initializer syntax for the class - this
+  // means that these are now actually bound methods on the class, where this
+  // is the containing class
+  // this is reminiscent of what you saw in TS - notice the different syntax
+  // from just method syntax:
+  // handleSubmit(event) {
+  handleSubmit = (event) => {
+    event.preventDefault(); // prevent form from doing default submit of GET request and refreshing page
+    
+    const newTodo = {
+      id: generateId(),
+      name: this.state.currentTodo,
+      isComplete: false,
+    };
+
+    const updatedTodos = addTodo(this.state.todos, newTodo); // get new list
+    this.setState({
+      todos: updatedTodos, // now refer to this new list
+      currentTodo: '', // reset current form
+      errorMessage: '', // clear any error message (could also do this in handleInputChange)
+    });
+  }
+
+  handleEmptySubmit = (event) => {
+    event.preventDefault();
+    this.setState({
+      errorMessage: 'Please supply a TODO name',
+    });
   }
 
   // again: interesting that we need to bind this ourselves in the constructor
@@ -72,7 +140,7 @@ class App extends Component {
   // shorthand arrow functions could be a thing in ES7:
   // handleInputChange = () => { ... }; this would take the lexical scope
   // of class
-  handleInputChange(event) {
+  handleInputChange = (event) => {
     // do NOT do this.state.currentTodo = event.target.value;
     // not only will this not trigger a rerender, but you lose any sort
     // of auditing/tracking of changes
@@ -82,6 +150,15 @@ class App extends Component {
   }
 
   render() {
+    // note that render is called as a byproduct of whenever the setState function is 
+    // called, and so what we can do is check for whether the field is empty at each
+    // state change here rather than wait for full submit event and then a bunch
+    // of conditional logic in there
+    const submitHandler = this.state.currentTodo ? this.handleSubmit : this.handleEmptySubmit;
+
+    // notice also the analog for ngShow here: we just evaluate a JS expression
+    // of whether some condition holds, and if so, we return the span tag as an 
+    // expression
     return (
       <div className="App">
         <div className="App-header">
@@ -89,7 +166,10 @@ class App extends Component {
           <h2>React Todos</h2>
         </div>
         <div className="Todo-App">
-          <TodoForm currentTodo={this.state.currentTodo} handleInputChange={this.handleInputChange} />
+          {this.state.errorMessage && <span className="error">{this.state.errorMessage}</span>}
+          <TodoForm currentTodo={this.state.currentTodo}
+                    handleInputChange={this.handleInputChange}
+                    handleSubmit={submitHandler} />
           <TodoList todos={this.state.todos} />          
         </div>
       </div>
