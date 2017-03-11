@@ -49,9 +49,11 @@ class App extends Component {
     currentTodo: '',
   };
 
-
-  constructor() {
-    super(); // constructor for extending component gets called
+  // after shifting to property initializer syntax, we have a constructor
+  // that just calls super, which creates a "useless constructor" warning,
+  // since that's all a default constructor does anyway
+  //constructor() {
+  //  super(); // constructor for extending component gets called
     // remember here: unlike in ES5-style classes, in ES6, the actual object
     // after new is created in the superclass constructor function first; ES5
     // actually has the subclass constructor (what follows new) create the
@@ -93,7 +95,7 @@ class App extends Component {
     // actually, now we're using property initializer syntax below now, so
     // we no longer have to do these explicit bindings - create-react-app
     // comes with this directly!
-  }
+  //}
 
   // can avoid ugly conditional code in submit handler for validation - can
   // keep in own function
