@@ -1,4 +1,11 @@
-import {addTodo, generateId} from './todoHelpers';
+import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, generateId} from './todoHelpers';
+
+// simple to quickly ad-hoc skip tests or test groups: just do .skip
+// conversely, can use the .only on describe or test as the complement
+// shorthand version (that does the same thing - only run this out of the
+// group of same type of blocks, so don't have to write a bunch of skips)
+
+
 
 // custom assertion
 expect.extend({
@@ -116,13 +123,190 @@ describe('addTodo function', () => {
     const result = addTodo(startTodos, newTodo);
 
     // Step 3: Assert: evaluate the results
-    expect(result).not.toBe(startTodos); // don't want the same object
+    expect(result).not.toBe(startTodos); // don't want the same object (toBe = reference equality)
   });
 });
 
+// writing this one in TDD style!
+describe('findTodoById function', () => {
+  test('findTodoById should return expected item from array', () => {
+    const startTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 2,
+        name: 'two',
+        isComplete: false,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const expectedToFind = {
+      id: 2,
+      name: 'two',
+      isComplete: false,
+    };
+
+    // made this a generic variable in case want to refactor tests later - this
+    // creates an abstraction over the general "normative" use case of "finding
+    // and getting successfully some item by valid and existing ID in the list"
+    // if we just used 2 hardcoded, then (a) this test would be harder to
+    // refactor and (b) it more represents a specific test case as such: "find
+    // should return item with ID 2 from array". This is slightly pedantic but
+    // useful to think about, as we are representing the case w/ this test
+    // case of finding some ID i that should exist in our list.
+    const idToLookFor = 2;
+
+    const findResult = findTodoById(idToLookFor, startTodos);
+    expect(findResult).toEqual(expectedToFind); // note: toEqual here means recursive =, vs. toBe, which checks for identity (different from tape node module, which has equal for reference check and deepEqual for recursive check)
+  });
+});
+
+describe('toggleTodoCompletion function', () => {
+  // recall: it = test in jest
+  it('should toggle the isComplete property of a todo object', () => {
+    const startTodo = {
+      id: 1,
+      name: 'one',
+      isComplete: false,
+    };
+
+    const expectedToggledTodo = {
+      id: 1,
+      name: 'one',
+      isComplete: true,
+    };
+
+    // make sure to test both directions!
+
+    const toggledTodoResult = toggleTodoCompletion(startTodo);
+    expect(toggledTodoResult).toEqual(expectedToggledTodo);
+
+    const reverseToggleResult = toggleTodoCompletion(toggledTodoResult);
+    expect(reverseToggleResult).toEqual(startTodo);
+  });
+
+  it('should not mutate the original todo object passed in', () => {
+    const startTodo = {
+      id: 1,
+      name: 'one',
+      isComplete: false,
+    };
+
+    const toggledTodoResult = toggleTodoCompletion(startTodo);
+
+    // we have tested the preconditions above against the same object, so no
+    // need to repeat here, since making the exact same call - this is a disjoint
+    // test case against the same object/call tuple that we had from before -
+    // just splitting out for better isolation and readability
+
+    expect(toggledTodoResult).not.toBe(startTodo); // not same object reference
+  });
+
+});
+
+// updateTodo(todoList, updatedTodo)
+// this function should take in an updatedTodo and then return a new list
+// with the new item replacing a matched item in the original list
+describe('updateTodo function', () => {
+  // TODO: could add more tests here about the signature of the function and
+  // inputs, etc.
+
+  it('should update an item by id', () => {
+    const startTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 2,
+        name: 'two',
+        isComplete: false,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const expectedTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 2,
+        name: 'two',
+        isComplete: true,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const updatedTodoItem = {
+      id: 2,
+      name: 'two',
+      isComplete: true, // changing isComplete flag from false to true
+    };
+
+    const updatedTodosList = updateTodo(startTodos, updatedTodoItem);
+    expect(expectedTodos).toEqual(updatedTodosList); // deep recursive check of properties
+  });
+
+  // beforeEach would be very handy here...
+  it('should not update the original array', () => {
+    const startTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 2,
+        name: 'two',
+        isComplete: false,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const updatedTodoItem = {
+      id: 2,
+      name: 'two',
+      isComplete: true, // changing isComplete flag from false to true
+    };
+
+    // again, this is a disjoint test over the same preconditions/invocation
+    // as before - just breaking out this test for readability (we want the
+    // assertion to be labeled under a different it/test tag line)
+    const updatedTodosList = updateTodo(startTodos, updatedTodoItem);
+    expect(updatedTodosList).not.toBe(startTodos); // don't want the same reference - don't mutate in place!
+  });
+
+  // TODO: should add tests for cases where we update with an item that doesn't
+  // already have a matching id in the array
+});
+
+
 describe('generateId function', () => {
   // test() = it()
-  test('generateId should return a number between 0 (inclusive) and 100,000 (exclusive)', () => {
+  it('should return a number between 0 (inclusive) and 100,000 (exclusive)', () => {
     const MIN_EXPECTED = 0;
     const MAX_EXPECTED = 99999;
 
