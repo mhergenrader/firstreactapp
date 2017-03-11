@@ -38,5 +38,15 @@ style
     decent confidence, assuming you have comprehensive enough tests)
 - Arrange, Act, Assert as the unit test setup (pretty self-explanatory)
 
+- remember that the key property is important for react for any output dom
+  elements - it allows quickly calculation for the virtual DOM to see what
+  has changed - we don't necessarily need every single item in a react app to
+  have a unique key/id, but we do need, if these elements are mapped to a
+  collection of DOM elements/represented by them, that output list to have
+  a key for each of those elements that is unique, and this should come from
+  the underlying collection (not just the index in the array - that's bad)
+
 TODO:
 - look at the reexport setup of index.js in components/todo
+- // TODO: what is the default context in ES6? still undefined in strict mode? are we strict mode by default?
+

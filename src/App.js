@@ -15,7 +15,7 @@ import './App.css'; // CSS modules
 // interesting that we didn't need to include index here at end of path
 // to collect - is this an ES6 feature or wrapped up in the build step?
 import {TodoForm, TodoList} from './components/todo';
-import {addTodo, generateId} from './lib/todoHelpers';
+import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, generateId} from './lib/todoHelpers';
 
 class App extends Component {
   // if no constructor provided, then the default looks like this:
@@ -149,6 +149,16 @@ class App extends Component {
     });
   }
 
+  handleToggle = (id) => {
+    const todoItem = findTodoById(id, this.state.todos);
+    const toggledTodo = toggleTodoCompletion(todoItem); // new todo object returned
+    const updatedTodosList = updateTodo(this.state.todos, toggledTodo); // new list here
+
+    this.setState({
+      todos: updatedTodosList,
+    });
+  };
+
   render() {
     // note that render is called as a byproduct of whenever the setState function is 
     // called, and so what we can do is check for whether the field is empty at each
@@ -170,7 +180,7 @@ class App extends Component {
           <TodoForm currentTodo={this.state.currentTodo}
                     handleInputChange={this.handleInputChange}
                     handleSubmit={submitHandler} />
-          <TodoList todos={this.state.todos} />          
+          <TodoList todos={this.state.todos} handleToggle={this.handleToggle} />          
         </div>
       </div>
     );
