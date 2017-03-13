@@ -153,6 +153,8 @@ class App extends Component {
   }
 
   handleToggle = (id) => {
+    // just shortened some code here - notice the partial call because
+    // updateTodos takes two arguments - we need to include the this.state.todos
     const getUpdatedTodos = compose(findTodoById, toggleTodoCompletion, partial(updateTodo, this.state.todos));
 
     //const todoItem = findTodoById(id, this.state.todos);

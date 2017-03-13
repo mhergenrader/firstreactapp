@@ -1,4 +1,4 @@
-import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, generateId} from './todoHelpers';
+import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, generateId} from './todoHelpers';
 
 // simple to quickly ad-hoc skip tests or test groups: just do .skip
 // conversely, can use the .only on describe or test as the complement
@@ -301,6 +301,71 @@ describe('updateTodo function', () => {
 
   // TODO: should add tests for cases where we update with an item that doesn't
   // already have a matching id in the array
+});
+
+describe('removeTodo function', () => {
+  it('should remove an item by id', () => {
+    const startTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 2,
+        name: 'two',
+        isComplete: false,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const idToRemove = 2;
+    const expectedTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const resultTodos = removeTodo(startTodos, idToRemove);
+    expect(resultTodos).toEqual(expectedTodos);
+  });
+
+  it('should not mutate the original array', () => {
+    const startTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 2,
+        name: 'two',
+        isComplete: false,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const idToRemove = 2;
+    const resultTodos = removeTodo(startTodos, idToRemove);
+    expect(resultTodos).not.toBe(startTodos);
+  });
+
+  // TODO: should include a test for cases where there is no matching ID found
 });
 
 
