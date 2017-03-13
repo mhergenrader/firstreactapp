@@ -17,7 +17,7 @@ import './App.css'; // CSS modules
 // RESOLVED: see the index.js file here - this is NOT an ES6 convention - it is node
 // and webpack-supported/based
 import {TodoForm, TodoList} from './components/todo';
-import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, generateId} from './lib/todoHelpers';
+import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, generateId} from './lib/todoHelpers';
 import {partial, compose} from './lib/utils';
 
 class App extends Component {
@@ -166,6 +166,16 @@ class App extends Component {
     });
   };
 
+  handleRemove = (id, event) => {
+    event.preventDefault(); // will remove todo from clickable link; we don't want the link
+    // to follow through updating address bar
+
+    const updatedTodos = removeTodo(this.state.todos, id);
+    this.setState({
+      todos: updatedTodos,
+    });
+  };
+
   render() {
     // note that render is called as a byproduct of whenever the setState function is 
     // called, and so what we can do is check for whether the field is empty at each
@@ -187,7 +197,9 @@ class App extends Component {
           <TodoForm currentTodo={this.state.currentTodo}
                     handleInputChange={this.handleInputChange}
                     handleSubmit={submitHandler} />
-          <TodoList todos={this.state.todos} handleToggle={this.handleToggle} />          
+          <TodoList todos={this.state.todos}
+                    handleToggle={this.handleToggle}
+                    handleRemove={this.handleRemove} />
         </div>
       </div>
     );

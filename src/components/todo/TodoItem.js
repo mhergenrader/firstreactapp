@@ -17,9 +17,13 @@ export const TodoItem = (props) => {
   //const handleToggle = props.handleToggle.bind(null, props.id); // this = null since not interested in resetting context
   // TODO: what is the default context in ES6? still undefined in strict mode? are we strict mode by default?
   
+  // just creating some bound methods to just pass in the functions vs. needing
+  // to have callbacks (e.g. a wrapper function around the call to handleRemove(props.id))
   const handleToggle = partial(props.handleToggle, props.id);
+  const handleRemove = partial(props.handleRemove, props.id);
   return (
     <li>
+      <span className="delete-item"><a href="#" onClick={handleRemove}>X</a></span>
       <input type="checkbox"
             checked={props.isComplete}
             onChange={handleToggle} />
