@@ -54,13 +54,20 @@ important: order matters here, since apparently objects now store keys in insert
 // Returns a new todos list with the new todo in place of the original
 // Replace existing item with updated item
 export const updateTodo = (todosList, updatedTodoItem) => {
-  const updatedIndex = todosList.findIndex(({id: listItemId}) => updatedTodoItem.id === listItemId);
+  const updatedIndex = todosList.findIndex(
+    ({id: listItemId}) => updatedTodoItem.id === listItemId);
+  
   if (~updatedIndex) {
     // notice how we are making an entirely new array here, with copied references
     // to our existing items surrounding the insertion of a reference to this new item
     // TODO: couldn't we also just do something like [...todosList].splice(updatedIndex, 1, updatedTodoItem),
     // since that would copy all references to a new array and then just overwrite in this new
     // array first?
+    // RESOLVED: yes, you could do this also - all that we care about w/ respect to maintaining
+    // immutability is that the value we are using for setState is a different object/array,
+    // such that the reference equality check returns false; thus, can also just do
+    // todosList.concat, and then modify that new value inline, as this is a different
+    // array from the todosList input argument
     return [
       ...todosList.slice(0, updatedIndex), 
       updatedTodoItem,
