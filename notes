@@ -62,3 +62,11 @@ TODO:
   - and it seems to consume context object properly, we can just go to this.context, but also
     just good for class API to set up the contextTypes static property (like propTypes) so we can
     announce (and validate) what we are consuming as a descendant element
+- even if something isn't modified, shouldn't we still return a copy? or is it just that mutations
+  alone require making new copies (and that if we return the same array reference it is ok,
+  provided we don't change it? is returning new copy no matter what best practice?)
+  - seems like it would be for auditing, where each time we change the route state, then we
+    have our own copy of the array (which should be equal to the original)
+    - on the other hand, perhaps that would be overkill
+  - context: filterTodos
+- from Router: // TODO: learn more about why event handlers/AJAX requests best kept to after DOM loading done
