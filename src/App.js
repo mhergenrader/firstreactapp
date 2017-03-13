@@ -17,7 +17,7 @@ import './App.css'; // CSS modules
 // RESOLVED: see the index.js file here - this is NOT an ES6 convention - it is node
 // and webpack-supported/based
 import {TodoForm, TodoList} from './components/todo';
-import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, generateId} from './lib/todoHelpers';
+import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, generateId} from './lib/todoHelpers';
 import {partial, compose} from './lib/utils';
 
 class App extends Component {
@@ -153,6 +153,8 @@ class App extends Component {
   }
 
   handleToggle = (id) => {
+    // just shortened some code here - notice the partial call because
+    // updateTodos takes two arguments - we need to include the this.state.todos
     const getUpdatedTodos = compose(findTodoById, toggleTodoCompletion, partial(updateTodo, this.state.todos));
 
     //const todoItem = findTodoById(id, this.state.todos);
@@ -161,6 +163,16 @@ class App extends Component {
 
     this.setState({
       todos: getUpdatedTodos(id, this.state.todos),
+    });
+  };
+
+  handleRemove = (id, event) => {
+    event.preventDefault(); // will remove todo from clickable link; we don't want the link
+    // to follow through updating address bar
+
+    const updatedTodos = removeTodo(this.state.todos, id);
+    this.setState({
+      todos: updatedTodos,
     });
   };
 
@@ -185,7 +197,9 @@ class App extends Component {
           <TodoForm currentTodo={this.state.currentTodo}
                     handleInputChange={this.handleInputChange}
                     handleSubmit={submitHandler} />
-          <TodoList todos={this.state.todos} handleToggle={this.handleToggle} />          
+          <TodoList todos={this.state.todos}
+                    handleToggle={this.handleToggle}
+                    handleRemove={this.handleRemove} />
         </div>
       </div>
     );

@@ -80,4 +80,27 @@ export const updateTodo = (todosList, updatedTodoItem) => {
   // a PUT operation and append if not already found  
 };
 
+export const removeTodo = (todosList, idToRemove) => {
+  const indexToRemove = todosList.findIndex(
+    ({id: todoId}) => todoId === idToRemove);
+
+  if (~indexToRemove) {
+    // NOTE: just like we mention above, it doesn't matter how we create the 
+    // new array, as long as you make a new array - you could slice and then
+    // splice if you want - it doesn't matter; just as long as you're returning
+    // a new array and don't modify the original; this implementation here
+    // is handy because it is quite similar to update - only difference is
+    // that we just take things on both sides of the existing item and don't
+    // include the item itself!
+    return [
+      ...todosList.slice(0, indexToRemove),
+      ...todosList.slice(indexToRemove + 1),
+    ];
+  }
+
+  // TODO: should throw error or otherwise just fail out here if the index
+  // was not found for some ID
+};
+
+
 export const generateId = () => Math.floor(Math.random() * 100000);

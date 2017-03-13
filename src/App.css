@@ -41,6 +41,25 @@ li {
   list-style-type: none;
 }
 
+li span.delete-item {
+  visibility: hidden; /* hidden by default, but when hovering over list item, display */
+}
+
+span.delete-item a {
+  text-decoration: none; /* remove the underine from link */
+  color: red;
+} /*
+special note here: needed to include a here because any own properties of some
+element will always override anything inherited; when we styled just the
+span.delete-item, those properties were inherited by the links contained inside,
+but the user agent stylesheet already had rules that dominated because they
+applied to anchor tags directly
+*/
+
+li:hover span.delete-item {
+  visibility: visible;
+}
+
 .error {
   color: red;
 }
