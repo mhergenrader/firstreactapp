@@ -17,7 +17,7 @@ import './App.css'; // CSS modules
 // RESOLVED: see the index.js file here - this is NOT an ES6 convention - it is node
 // and webpack-supported/based
 import {TodoForm, TodoList, Footer} from './components/todo';
-import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, generateId} from './lib/todoHelpers';
+import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, filterTodos, generateId} from './lib/todoHelpers';
 import {partial, compose} from './lib/utils';
 
 
@@ -52,6 +52,10 @@ class App extends Component {
     ],
     currentTodo: '',
   };
+
+  static contextTypes = {
+    route: React.PropTypes.string, // don't really need the handleLinkChange handler func here
+  }
 
   // after shifting to property initializer syntax, we have a constructor
   // that just calls super, which creates a "useless constructor" warning,
@@ -184,6 +188,8 @@ class App extends Component {
     // of conditional logic in there
     const submitHandler = this.state.currentTodo ? this.handleSubmit : this.handleEmptySubmit;
 
+    const filteredTodos = filterTodos(this.state.todos, this.context.route);
+
     // notice also the analog for ngShow here: we just evaluate a JS expression
     // of whether some condition holds, and if so, we return the span tag as an 
     // expression
@@ -198,7 +204,7 @@ class App extends Component {
           <TodoForm currentTodo={this.state.currentTodo}
                     handleInputChange={this.handleInputChange}
                     handleSubmit={submitHandler} />
-          <TodoList todos={this.state.todos}
+          <TodoList todos={filteredTodos}
                     handleToggle={this.handleToggle}
                     handleRemove={this.handleRemove} />
           <Footer />

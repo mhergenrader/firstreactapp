@@ -1,4 +1,4 @@
-import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, generateId} from './todoHelpers';
+import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, filterTodos, generateId} from './todoHelpers';
 
 // simple to quickly ad-hoc skip tests or test groups: just do .skip
 // conversely, can use the .only on describe or test as the complement
@@ -366,6 +366,113 @@ describe('removeTodo function', () => {
   });
 
   // TODO: should include a test for cases where there is no matching ID found
+});
+
+describe('filterTodos function', () => {
+
+  // NOTE: here we don't have an assertion/test for being a different object
+  // since the current implementation just returns back the same list as before
+  // (not in a new object - same list reference value) - TODO: investigate this
+  it('should return all items for root route', () => {
+    const startTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 2,
+        name: 'two',
+        isComplete: false,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const rootRoute = '/'; // here, we have a somewhat more hardcoded/specific
+    // test case: we want to have certain filtering behavior per route, so
+    // we have specific routes this time
+    const filteredTodos = filterTodos(startTodos, rootRoute);
+
+    expect(filteredTodos).toEqual(startTodos);
+  });
+
+  it('should return only incomplete items on active route', () => {
+    const startTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 2,
+        name: 'two',
+        isComplete: true,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const expectedTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const activeRoute = '/active';
+    const filteredTodos = filterTodos(startTodos, activeRoute);
+
+    expect(filteredTodos).toEqual(expectedTodos);
+  });
+
+  // TODO: likely should have other cases/assertions like testing that for
+  // empty list of todos, we get empty list, etc. or for cases where there
+  // are no completed items, we get empty list as result (to be more exhaustive)
+  it('should return only complete items for complete route', () => {
+    const startTodos = [
+      {
+        id: 1,
+        name: 'one',
+        isComplete: false,
+      },
+      {
+        id: 2,
+        name: 'two',
+        isComplete: true,
+      },
+      {
+        id: 3,
+        name: 'three',
+        isComplete: false,
+      },
+    ];
+
+    const expectedTodos = [
+      {
+        id: 2,
+        name: 'two',
+        isComplete: true,
+      },
+    ];
+
+    const completeRoute = '/complete';
+    const filteredTodos = filterTodos(startTodos, completeRoute);
+
+    expect(filteredTodos).toEqual(expectedTodos);
+  });
 });
 
 

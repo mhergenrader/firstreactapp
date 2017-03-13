@@ -49,6 +49,25 @@ export class Router extends Component {
     };
   }
 
+  // including this lifecycle method because the only times we update the route state
+  // for our app is at the initial loading of this component (look at URL) and then
+  // when the linkHandler is fired (currently only via our app links); we want to 
+  // keep the app state (like how the filtered view is updated each time we change it)
+  // in sync with the case where the URL/route chanaged but not by one of our app's events
+  // e.g. our loading or a footer click - thus, we need to register some event handlers
+  // to see the browser URL change from browser events that changed the route
+  // we set this up after we have already rendered and set up our state
+  // TODO: learn more about why event handlers/AJAX requests best kept to after DOM loading done
+  componentDidMount() {
+    // TODO: why not addEventListener?
+    // fires every time we use back and forward button in browser
+    window.onpopstate = () => {
+      this.setState({
+        route: getCurrentPath(),
+      });
+    };
+  }
+
   // essentially just a passthrough for just rendering whatever it wraps (in this case,
   // it is our full application: whenever a link is clicked that updates the URL/location
   // state of our app, we want all components to be able to access this/query the location,

@@ -102,5 +102,24 @@ export const removeTodo = (todosList, idToRemove) => {
   // was not found for some ID
 };
 
+// this seems like a perfect candidate for do expressions! (to not do switch)
+// TODO: look up how to set up the build config to include this under babel
+export const filterTodos = (todosList, route) => {
+  switch (route) {
+    case '/active':
+      return todosList.filter(({isComplete}) => !isComplete);
+    case '/complete':
+      return todosList.filter(({isComplete}) => isComplete);
+    default:
+      return todosList; // notice here how we don't have any mutations here
+      // this one is interesting: the above two cases return new lists, but
+      // this one returns just the same list as before; if there are no
+      // mutations, is it ok to still return thesame list? doesn't best
+      // practice dictate we should return a new list anyway to signal potential
+      // intent to modify, even if it were not performed?
+      // TODO
+  }
+}
+
 
 export const generateId = () => Math.floor(Math.random() * 100000);
