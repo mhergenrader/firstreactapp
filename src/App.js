@@ -14,8 +14,11 @@ import './App.css'; // CSS modules
 // TODO
 // interesting that we didn't need to include index here at end of path
 // to collect - is this an ES6 feature or wrapped up in the build step?
+// RESOLVED: see the index.js file here - this is NOT an ES6 convention - it is node
+// and webpack-supported/based
 import {TodoForm, TodoList} from './components/todo';
 import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, generateId} from './lib/todoHelpers';
+import {partial, compose} from './lib/utils';
 
 class App extends Component {
   // if no constructor provided, then the default looks like this:
@@ -137,7 +140,7 @@ class App extends Component {
   // now, all class methods here are still just functions, so we must bind
   // ourselves - site above has some options for this, with this video series
   // preferring the constructor version of this
-  // shorthand arrow functions could be a thing in ES7:
+  // shorthand arrow functions could be a thing in ES7: (experimental feature)
   // handleInputChange = () => { ... }; this would take the lexical scope
   // of class
   handleInputChange = (event) => {
@@ -150,12 +153,14 @@ class App extends Component {
   }
 
   handleToggle = (id) => {
-    const todoItem = findTodoById(id, this.state.todos);
-    const toggledTodo = toggleTodoCompletion(todoItem); // new todo object returned
-    const updatedTodosList = updateTodo(this.state.todos, toggledTodo); // new list here
+    const getUpdatedTodos = compose(findTodoById, toggleTodoCompletion, partial(updateTodo, this.state.todos));
+
+    //const todoItem = findTodoById(id, this.state.todos);
+    //const toggledTodo = toggleTodoCompletion(todoItem); // new todo object returned
+    //const updatedTodosList = updateTodo(this.state.todos, toggledTodo); // new list here
 
     this.setState({
-      todos: updatedTodosList,
+      todos: getUpdatedTodos(id, this.state.todos),
     });
   };
 
