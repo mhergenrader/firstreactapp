@@ -16,9 +16,10 @@ import './App.css'; // CSS modules
 // to collect - is this an ES6 feature or wrapped up in the build step?
 // RESOLVED: see the index.js file here - this is NOT an ES6 convention - it is node
 // and webpack-supported/based
-import {TodoForm, TodoList} from './components/todo';
+import {TodoForm, TodoList, Footer} from './components/todo';
 import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, generateId} from './lib/todoHelpers';
 import {partial, compose} from './lib/utils';
+
 
 class App extends Component {
   // if no constructor provided, then the default looks like this:
@@ -200,6 +201,7 @@ class App extends Component {
           <TodoList todos={this.state.todos}
                     handleToggle={this.handleToggle}
                     handleRemove={this.handleRemove} />
+          <Footer />
         </div>
       </div>
     );
