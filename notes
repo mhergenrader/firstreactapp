@@ -49,4 +49,10 @@ style
 TODO:
 - look at the reexport setup of index.js in components/todo
 - // TODO: what is the default context in ES6? still undefined in strict mode? are we strict mode by default?
-
+- look more at the React context mechanism for components
+  - in our example, this was used to handle the case where passing down values could be a
+    maintenance nightmare through many levels (e.g. passing a callback)
+  - I wonder if multiple ancestors return a context object that they get merged? I would assume so
+  - and it seems to consume context object properly, we can just go to this.context, but also
+    just good for class API to set up the contextTypes static property (like propTypes) so we can
+    announce (and validate) what we are consuming as a descendant element
