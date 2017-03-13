@@ -46,6 +46,12 @@ style
   a key for each of those elements that is unique, and this should come from
   the underlying collection (not just the index in the array - that's bad)
 
+- I'm starting to see the benefits of having a more centralized state store like
+  I believe Redux is - we keep all state centralized and at a high level for 
+  simple placement and querying and accessibility for components (note how we
+  had to make Router at the highest level of the tree such that all components
+  could then query the route/url state)
+
 TODO:
 - look at the reexport setup of index.js in components/todo
 - // TODO: what is the default context in ES6? still undefined in strict mode? are we strict mode by default?
