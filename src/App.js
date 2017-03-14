@@ -19,7 +19,7 @@ import './App.css'; // CSS modules
 import {TodoForm, TodoList, Footer} from './components/todo';
 import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, filterTodos, generateId} from './lib/todoHelpers';
 import {partial, compose} from './lib/utils';
-import {loadTodos, createTodo} from './lib/todoService';
+import {loadTodos, createTodo, saveTodo} from './lib/todoService';
 
 class App extends Component {
   // if no constructor provided, then the default looks like this:
@@ -198,17 +198,29 @@ class App extends Component {
     });
   }
 
-  handleToggle = (id) => {
+  handleToggle = id => {
     // just shortened some code here - notice the partial call because
     // updateTodos takes two arguments - we need to include the this.state.todos
-    const getUpdatedTodos = compose(findTodoById, toggleTodoCompletion, partial(updateTodo, this.state.todos));
+    //const getUpdatedTodos = compose(findTodoById, toggleTodoCompletion, partial(updateTodo, this.state.todos));
+
+    // now need to break up the pipeline for the server call
+    const getToggledTodo = compose(findTodoById, toggleTodoCompletion); // toggleTodoCompletion(findTodoById(id))
+    const updatedTodo = getToggledTodo(id, this.state.todos);
+
+    const getUpdatedTodos = partial(updateTodo, this.state.todos);
+
+    const updatedTodos = getUpdatedTodos(updatedTodo);
 
     //const todoItem = findTodoById(id, this.state.todos);
     //const toggledTodo = toggleTodoCompletion(todoItem); // new todo object returned
     //const updatedTodosList = updateTodo(this.state.todos, toggledTodo); // new list here
 
     this.setState({
-      todos: getUpdatedTodos(id, this.state.todos),
+      todos: updatedTodos, //getUpdatedTodos(id, this.state.todos),
+    });
+
+    saveTodo(updatedTodo).then(() => {
+      this.showTempMessage('Todo updated');
     });
   };
 

@@ -13,7 +13,7 @@
     {
       "id": 3,
       "name": "Connect to server",
-      "isComplete": false
+      "isComplete": true
     },
     {
       "id": 4,
