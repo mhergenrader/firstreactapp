@@ -56,6 +56,16 @@ json-server = handy lightweight server that serves up some json and allows us
 to persist into some file
 $ json-server -p 8080 --watch db.json
 
+fetch API is an experimental new way of requesting data from a server; it is
+supportive of PRomise-based API; it is the experimental replacement for
+XMLHttpRequest
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+- also provides definitions for CORS and HTTP origin headers
+- GlobalFetch.fetch is the technical method - implemented in some browsers on window
+  and web workers
+- fetch takes just the server location as request (path) and then returns
+  Response object wrapped in a promise
+- not under ECMAscript - this is just a browser/web api
 
 TODO:
 - look at the reexport setup of index.js in components/todo

@@ -19,7 +19,7 @@ import './App.css'; // CSS modules
 import {TodoForm, TodoList, Footer} from './components/todo';
 import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, filterTodos, generateId} from './lib/todoHelpers';
 import {partial, compose} from './lib/utils';
-import {loadTodos} from './lib/todoService';
+import {loadTodos, createTodo} from './lib/todoService';
 
 class App extends Component {
   // if no constructor provided, then the default looks like this:
@@ -134,11 +134,25 @@ class App extends Component {
     };
 
     const updatedTodos = addTodo(this.state.todos, newTodo); // get new list
+
+    // notice here that we are no matter what also adding the todo directly
+    // to our state in memory - this is an optimistic update, since our send
+    // to the server could also fail, but it is important to do both
+    // another option would be to send to the server and wait for it to
+    // confirm reception and then on that fulfilled promise, then update
+    // our state with the updated todo value as well (and update the list)
     this.setState({
       todos: updatedTodos, // now refer to this new list
       currentTodo: '', // reset current form
       errorMessage: '', // clear any error message (could also do this in handleInputChange)
     });
+
+    createTodo(newTodo)
+      .then(() => console.log('Todo added to server'));
+    // remember: we send up our json to the server and get back a promise that
+    // will first schedule parsing of the response to JSON on the jobs
+    // queue, and then we set up this promise to observe that result async
+    // as well as another piece on the jobs queue
   }
 
   handleEmptySubmit = (event) => {
