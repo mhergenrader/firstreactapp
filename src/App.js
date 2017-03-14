@@ -141,6 +141,8 @@ class App extends Component {
     // another option would be to send to the server and wait for it to
     // confirm reception and then on that fulfilled promise, then update
     // our state with the updated todo value as well (and update the list)
+    // official term: "optimistic UI update" = we render the updated todos
+    // list before receiving any response from server = more responsive
     this.setState({
       todos: updatedTodos, // now refer to this new list
       currentTodo: '', // reset current form
@@ -148,11 +150,25 @@ class App extends Component {
     });
 
     createTodo(newTodo)
-      .then(() => console.log('Todo added to server'));
+      .then(() => {
+        this.showTempMessage('Todo added');
+      });
     // remember: we send up our json to the server and get back a promise that
     // will first schedule parsing of the response to JSON on the jobs
     // queue, and then we set up this promise to observe that result async
     // as well as another piece on the jobs queue
+  }
+
+  showTempMessage = message => {
+    this.setState({
+      message,
+    });
+    // set our message and then clear it out
+    setTimeout(() => {
+      this.setState({
+        message: '',
+      });
+    }, 2500);
   }
 
   handleEmptySubmit = (event) => {
@@ -226,6 +242,7 @@ class App extends Component {
         </div>
         <div className="Todo-App">
           {this.state.errorMessage && <span className="error">{this.state.errorMessage}</span>}
+          {this.state.message && <span className="success">{this.state.message}</span>}
           <TodoForm currentTodo={this.state.currentTodo}
                     handleInputChange={this.handleInputChange}
                     handleSubmit={submitHandler} />
