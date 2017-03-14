@@ -19,7 +19,7 @@ import './App.css'; // CSS modules
 import {TodoForm, TodoList, Footer} from './components/todo';
 import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, filterTodos, generateId} from './lib/todoHelpers';
 import {partial, compose} from './lib/utils';
-
+import {loadTodos, createTodo, saveTodo, deleteTodo} from './lib/todoService';
 
 class App extends Component {
   // if no constructor provided, then the default looks like this:
@@ -33,7 +33,7 @@ class App extends Component {
   // w/ configuration to allow this by default from create-react-app)
   // thus, we don't have to put this in the constructor
   state = {
-    todos: [
+    /*todos: [
       {
         id: 1,
         name: 'Learn React',
@@ -49,12 +49,23 @@ class App extends Component {
         name: 'Ship it',
         isComplete: true,
       },
-    ],
+    ],*/// now loading from server when component mounts
+    todos: [],
     currentTodo: '',
   };
 
   static contextTypes = {
     route: React.PropTypes.string, // don't really need the handleLinkChange handler func here
+  }
+
+  // remember: this lifecycle method only called once on initial render
+  // after the initial render has fired and this has been added to the DOM
+  componentDidMount() {
+    loadTodos().then(todos => { // observe the JSON-parsed promise value
+      this.setState({ // see why arrow functions so handy? we take in the this that is lexical, so we refer to the component!
+        todos,
+      });
+    });
   }
 
   // after shifting to property initializer syntax, we have a constructor
@@ -123,11 +134,41 @@ class App extends Component {
     };
 
     const updatedTodos = addTodo(this.state.todos, newTodo); // get new list
+
+    // notice here that we are no matter what also adding the todo directly
+    // to our state in memory - this is an optimistic update, since our send
+    // to the server could also fail, but it is important to do both
+    // another option would be to send to the server and wait for it to
+    // confirm reception and then on that fulfilled promise, then update
+    // our state with the updated todo value as well (and update the list)
+    // official term: "optimistic UI update" = we render the updated todos
+    // list before receiving any response from server = more responsive
     this.setState({
       todos: updatedTodos, // now refer to this new list
       currentTodo: '', // reset current form
       errorMessage: '', // clear any error message (could also do this in handleInputChange)
     });
+
+    createTodo(newTodo)
+      .then(() => {
+        this.showTempMessage('Todo added');
+      });
+    // remember: we send up our json to the server and get back a promise that
+    // will first schedule parsing of the response to JSON on the jobs
+    // queue, and then we set up this promise to observe that result async
+    // as well as another piece on the jobs queue
+  }
+
+  showTempMessage = message => {
+    this.setState({
+      message,
+    });
+    // set our message and then clear it out
+    setTimeout(() => {
+      this.setState({
+        message: '',
+      });
+    }, 2500);
   }
 
   handleEmptySubmit = (event) => {
@@ -157,17 +198,29 @@ class App extends Component {
     });
   }
 
-  handleToggle = (id) => {
+  handleToggle = id => {
     // just shortened some code here - notice the partial call because
     // updateTodos takes two arguments - we need to include the this.state.todos
-    const getUpdatedTodos = compose(findTodoById, toggleTodoCompletion, partial(updateTodo, this.state.todos));
+    //const getUpdatedTodos = compose(findTodoById, toggleTodoCompletion, partial(updateTodo, this.state.todos));
+
+    // now need to break up the pipeline for the server call
+    const getToggledTodo = compose(findTodoById, toggleTodoCompletion); // toggleTodoCompletion(findTodoById(id))
+    const updatedTodo = getToggledTodo(id, this.state.todos);
+
+    const getUpdatedTodos = partial(updateTodo, this.state.todos);
+
+    const updatedTodos = getUpdatedTodos(updatedTodo);
 
     //const todoItem = findTodoById(id, this.state.todos);
     //const toggledTodo = toggleTodoCompletion(todoItem); // new todo object returned
     //const updatedTodosList = updateTodo(this.state.todos, toggledTodo); // new list here
 
     this.setState({
-      todos: getUpdatedTodos(id, this.state.todos),
+      todos: updatedTodos, //getUpdatedTodos(id, this.state.todos),
+    });
+
+    saveTodo(updatedTodo).then(() => {
+      this.showTempMessage('Todo updated');
     });
   };
 
@@ -178,6 +231,10 @@ class App extends Component {
     const updatedTodos = removeTodo(this.state.todos, id);
     this.setState({
       todos: updatedTodos,
+    });
+
+    deleteTodo(id).then(() => {
+      this.showTempMessage('Todo removed');
     });
   };
 
@@ -201,6 +258,7 @@ class App extends Component {
         </div>
         <div className="Todo-App">
           {this.state.errorMessage && <span className="error">{this.state.errorMessage}</span>}
+          {this.state.message && <span className="success">{this.state.message}</span>}
           <TodoForm currentTodo={this.state.currentTodo}
                     handleInputChange={this.handleInputChange}
                     handleSubmit={submitHandler} />

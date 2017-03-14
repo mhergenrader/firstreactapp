@@ -1,0 +1,44 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "name": "Set up server",
+      "isComplete": true
+    },
+    {
+      "id": 2,
+      "name": "Start server",
+      "isComplete": true
+    },
+    {
+      "id": 3,
+      "name": "Connect to server",
+      "isComplete": true
+    },
+    {
+      "id": 4,
+      "name": "Set up fetch",
+      "isComplete": false
+    },
+    {
+      "id": 12670,
+      "name": "agegoine",
+      "isComplete": false
+    },
+    {
+      "id": 65797,
+      "name": "oingieong",
+      "isComplete": false
+    },
+    {
+      "id": 73269,
+      "name": "aoingeoinge",
+      "isComplete": false
+    },
+    {
+      "id": 34529,
+      "name": "gaegnegne",
+      "isComplete": false
+    }
+  ]
+}
