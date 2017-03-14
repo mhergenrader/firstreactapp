@@ -19,7 +19,7 @@ import './App.css'; // CSS modules
 import {TodoForm, TodoList, Footer} from './components/todo';
 import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, filterTodos, generateId} from './lib/todoHelpers';
 import {partial, compose} from './lib/utils';
-
+import {loadTodos} from './lib/todoService';
 
 class App extends Component {
   // if no constructor provided, then the default looks like this:
@@ -33,7 +33,7 @@ class App extends Component {
   // w/ configuration to allow this by default from create-react-app)
   // thus, we don't have to put this in the constructor
   state = {
-    todos: [
+    /*todos: [
       {
         id: 1,
         name: 'Learn React',
@@ -49,12 +49,23 @@ class App extends Component {
         name: 'Ship it',
         isComplete: true,
       },
-    ],
+    ],*/// now loading from server when component mounts
+    todos: [],
     currentTodo: '',
   };
 
   static contextTypes = {
     route: React.PropTypes.string, // don't really need the handleLinkChange handler func here
+  }
+
+  // remember: this lifecycle method only called once on initial render
+  // after the initial render has fired and this has been added to the DOM
+  componentDidMount() {
+    loadTodos().then(todos => { // observe the JSON-parsed promise value
+      this.setState({ // see why arrow functions so handy? we take in the this that is lexical, so we refer to the component!
+        todos,
+      });
+    });
   }
 
   // after shifting to property initializer syntax, we have a constructor

@@ -52,6 +52,11 @@ style
   had to make Router at the highest level of the tree such that all components
   could then query the route/url state)
 
+json-server = handy lightweight server that serves up some json and allows us
+to persist into some file
+$ json-server -p 8080 --watch db.json
+
+
 TODO:
 - look at the reexport setup of index.js in components/todo
 - // TODO: what is the default context in ES6? still undefined in strict mode? are we strict mode by default?
