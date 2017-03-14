@@ -19,7 +19,7 @@ import './App.css'; // CSS modules
 import {TodoForm, TodoList, Footer} from './components/todo';
 import {addTodo, findTodoById, toggleTodoCompletion, updateTodo, removeTodo, filterTodos, generateId} from './lib/todoHelpers';
 import {partial, compose} from './lib/utils';
-import {loadTodos, createTodo, saveTodo} from './lib/todoService';
+import {loadTodos, createTodo, saveTodo, deleteTodo} from './lib/todoService';
 
 class App extends Component {
   // if no constructor provided, then the default looks like this:
@@ -231,6 +231,10 @@ class App extends Component {
     const updatedTodos = removeTodo(this.state.todos, id);
     this.setState({
       todos: updatedTodos,
+    });
+
+    deleteTodo(id).then(() => {
+      this.showTempMessage('Todo removed');
     });
   };
 

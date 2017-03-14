@@ -59,3 +59,15 @@ export const saveTodo = todo => {
   // jobs queue
 };
 // TODO: for unit testing these functions, likely need a mock server
+
+export const deleteTodo = todoId => {
+  return fetch(`${baseUrl}/${todoId}`, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json', // solution leaves this in, but doesn't seem needed?
+      'Content-Type': 'application/json', // solution leaves this in, but doesn't seem needed, since we have no body here
+    },
+  }); // won't receive back any JSON here - just returning our original
+  // fetch promise - when that resolves (fulfills), we can assume that the
+  // item was deleted on the server
+};
